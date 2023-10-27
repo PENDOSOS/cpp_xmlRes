@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <memory>
+#include "Node.h"
 
 class XMLresource : std::enable_shared_from_this<XMLresource>
 {
@@ -17,11 +18,7 @@ public:
 	void printChildren(std::vector<std::shared_ptr<XMLresource>> const& childrens, int j);
 	void save();
 	void saveChildrens(std::vector<std::shared_ptr<XMLresource>> const& childrens, std::ofstream& fout);
-	std::shared_ptr<XMLresource> parent;
-	std::shared_ptr<XMLresource> current;
-	std::string name;
+	std::weak_ptr<XMLresource> getPtr();
 private:
-	int value;
-	std::vector<std::shared_ptr<XMLresource>> children;
-	std::string tag;
+	std::weak_ptr<Node> node_ptr;
 };

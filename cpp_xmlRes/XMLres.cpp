@@ -2,21 +2,15 @@
 
 XMLresource::XMLresource()
 {
-	current = nullptr;
-	parent = nullptr;
-	value = 0;
 }
 
 XMLresource::XMLresource(int a, std::string tag)
 {
-	this->value = a;
-	this->tag = tag;
 }
 
 void XMLresource::load()
 {
 	std::string line;
-	this->name = line;
 	std::ifstream fin("xml.txt");
 	while (std::getline(fin, line))
 	{
@@ -24,8 +18,7 @@ void XMLresource::load()
 		{
 			if (current == nullptr)
 			{
-				std::weak_ptr<XMLresource> temp_weak = weak_from_this();
-				current = shared_from_this();
+				current = std::make_shared<XMLresource>();
 				current->tag = line;
 				std::getline(fin, line);
 				current->value = std::stoi(std::string(1, line[line.size() - 1]));
@@ -34,16 +27,15 @@ void XMLresource::load()
 			{
 				std::string temp_tag = line;
 				std::getline(fin, line);
-				std::shared_ptr<XMLresource> temp = std::make_shared<XMLresource>();
-				current->children.push_back(std::move(temp));
+				std::shared_ptr<XMLresource> temp = std::make_shared<XMLresource>(std::stoi(std::string(1, line[line.size() - 1])), temp_tag);
+				current->children.push_back(temp);
 				current->children.back()->parent = current;
-				temp->parent = current;
-				current = move(current->children.back());
+				current = current->children.back();
 			}
 		}
 		else if (line[0] == '<' && line[1] == '/')
 		{
-			current = current->parent;
+			current = current->parent.lock();
 		}
 	}
 	fin.close();
@@ -72,10 +64,8 @@ void XMLresource::printChildren(std::vector<std::shared_ptr<XMLresource>> const&
 void XMLresource::save()
 {
 	std::ofstream fout("xml1.txt");
-	fout << this->name;
 	fout << "value=" << this->value;
 	saveChildrens(this->children, fout);
-	fout << "value=" << this->name;
 	fout.close();
 }
 
@@ -84,7 +74,6 @@ void XMLresource::saveChildrens(std::vector<std::shared_ptr<XMLresource>> const&
 	int i = 0;
 	while (i < childrens.size())
 	{
-		fout << childrens[i]->name << std::endl;
 		fout << childrens[i]->value << std::endl;
 		if (childrens.size() != 0)
 		{
@@ -92,4 +81,9 @@ void XMLresource::saveChildrens(std::vector<std::shared_ptr<XMLresource>> const&
 		}
 		i++;
 	}
+}
+
+std::weak_ptr<XMLresource> XMLresource::getPtr() 
+{
+	return shared_from_this();
 }
