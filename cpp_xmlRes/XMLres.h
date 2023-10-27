@@ -21,5 +21,6 @@ public:
 	std::string name;
 private:
 	int value;
-	std::vector<XMLresource*> childrens;
+	std::vector<XMLresource*> children;
+	std::string tag;
 };

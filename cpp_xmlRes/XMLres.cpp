@@ -31,7 +31,7 @@ void XMLresource::load()
 			{
 				std::getline(fin, line);
 				XMLresource* temp = new XMLresource(std::stoi(std::string(1, line[line.size() - 1])));
-				current->childrens.push_back(temp);
+				current->children.push_back(temp);
 				temp->parent = current;
 				current = temp;
 				current->name = line;
@@ -48,7 +48,7 @@ void XMLresource::load()
 void XMLresource::print()
 {
 	std::cout << this->value << std::endl;
-	printChildren(this->childrens, 3);
+	printChildren(this->children, 3);
 }
 
 void XMLresource::printChildren(std::vector<XMLresource*> const& childrens, int j)
@@ -59,7 +59,7 @@ void XMLresource::printChildren(std::vector<XMLresource*> const& childrens, int 
 		std::cout << std::setw(j) << childrens[i]->value << std::endl;
 		if (childrens.size() != 0)
 		{
-			printChildren(childrens[i]->childrens, j + 3);
+			printChildren(childrens[i]->children, j + 3);
 		}
 		i++;
 	}
@@ -70,7 +70,7 @@ void XMLresource::save()
 	std::ofstream fout("xml1.txt");
 	fout << this->name;
 	fout << "value=" << this->value;
-	saveChildrens(this->childrens, fout);
+	saveChildrens(this->children, fout);
 	fout << "value=" << this->name;
 	fout.close();
 }
@@ -84,7 +84,7 @@ void XMLresource::saveChildrens(std::vector<XMLresource*> const& childrens, std:
 		fout << childrens[i]->value << std::endl;
 		if (childrens.size() != 0)
 		{
-			saveChildrens(childrens[i]->childrens, fout);
+			saveChildrens(childrens[i]->children, fout);
 		}
 		i++;
 	}
