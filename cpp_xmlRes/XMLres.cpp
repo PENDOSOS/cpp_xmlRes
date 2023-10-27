@@ -1,18 +1,18 @@
 #include "XMLres.h"
 
-Node::Node()
+XMLresource::XMLresource()
 {
 	current = nullptr;
 	parent = nullptr;
 	value = 0;
 }
 
-Node::Node(int a)
+XMLresource::XMLresource(int a)
 {
 	this->value = a;
 }
 
-void Node::load()
+void XMLresource::load()
 {
 	std::string line;
 	this->name = line;
@@ -30,7 +30,7 @@ void Node::load()
 			else
 			{
 				std::getline(fin, line);
-				Node* temp = new Node(std::stoi(std::string(1, line[line.size() - 1])));
+				XMLresource* temp = new XMLresource(std::stoi(std::string(1, line[line.size() - 1])));
 				current->childrens.push_back(temp);
 				temp->parent = current;
 				current = temp;
@@ -45,13 +45,13 @@ void Node::load()
 	fin.close();
 }
 
-void Node::print()
+void XMLresource::print()
 {
 	std::cout << this->value << std::endl;
 	printChildren(this->childrens, 3);
 }
 
-void Node::printChildren(std::vector<Node*> const& childrens, int j)
+void XMLresource::printChildren(std::vector<XMLresource*> const& childrens, int j)
 {
 	int i = 0;
 	while (i < childrens.size())
@@ -65,7 +65,7 @@ void Node::printChildren(std::vector<Node*> const& childrens, int j)
 	}
 }
 
-void Node::save()
+void XMLresource::save()
 {
 	std::ofstream fout("xml1.txt");
 	fout << this->name;
@@ -75,7 +75,7 @@ void Node::save()
 	fout.close();
 }
 
-void Node::saveChildrens(std::vector<Node*> const& childrens, std::ofstream& fout)
+void XMLresource::saveChildrens(std::vector<XMLresource*> const& childrens, std::ofstream& fout)
 {
 	int i = 0;
 	while (i < childrens.size())
