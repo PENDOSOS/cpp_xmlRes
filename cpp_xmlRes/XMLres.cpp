@@ -7,9 +7,10 @@ XMLresource::XMLresource()
 	value = 0;
 }
 
-XMLresource::XMLresource(int a)
+XMLresource::XMLresource(int a, std::string tag)
 {
 	this->value = a;
+	this->tag = tag;
 }
 
 void XMLresource::load()
@@ -23,18 +24,21 @@ void XMLresource::load()
 		{
 			if (current == nullptr)
 			{
-				current = this;
+				std::weak_ptr<XMLresource> temp_weak = weak_from_this();
+				current = shared_from_this();
+				current->tag = line;
 				std::getline(fin, line);
 				current->value = std::stoi(std::string(1, line[line.size() - 1]));
 			}
 			else
 			{
+				std::string temp_tag = line;
 				std::getline(fin, line);
-				XMLresource* temp = new XMLresource(std::stoi(std::string(1, line[line.size() - 1])));
-				current->children.push_back(temp);
+				std::shared_ptr<XMLresource> temp = std::make_shared<XMLresource>();
+				current->children.push_back(std::move(temp));
+				current->children.back()->parent = current;
 				temp->parent = current;
-				current = temp;
-				current->name = line;
+				current = move(current->children.back());
 			}
 		}
 		else if (line[0] == '<' && line[1] == '/')
@@ -51,7 +55,7 @@ void XMLresource::print()
 	printChildren(this->children, 3);
 }
 
-void XMLresource::printChildren(std::vector<XMLresource*> const& childrens, int j)
+void XMLresource::printChildren(std::vector<std::shared_ptr<XMLresource>> const& childrens, int j)
 {
 	int i = 0;
 	while (i < childrens.size())
@@ -75,7 +79,7 @@ void XMLresource::save()
 	fout.close();
 }
 
-void XMLresource::saveChildrens(std::vector<XMLresource*> const& childrens, std::ofstream& fout)
+void XMLresource::saveChildrens(std::vector<std::shared_ptr<XMLresource>> const& childrens, std::ofstream& fout)
 {
 	int i = 0;
 	while (i < childrens.size())
