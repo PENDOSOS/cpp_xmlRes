@@ -6,20 +6,20 @@
 #include <iostream>
 #include <iomanip>
 
-class Node
+class XMLresource
 {
 public:
-	Node();
-	Node(int a);
+	XMLresource();
+	XMLresource(int a);
 	void load();
 	void print();
-	void printChildren(std::vector<Node*> const& childrens, int j);
+	void printChildren(std::vector<XMLresource*> const& childrens, int j);
 	void save();
-	void saveChildrens(std::vector<Node*> const& childrens, std::ofstream& fout);
-	Node* parent;
-	Node* current;
+	void saveChildrens(std::vector<XMLresource*> const& childrens, std::ofstream& fout);
+	XMLresource* parent;
+	XMLresource* current;
 	std::string name;
 private:
 	int value;
-	std::vector<Node*> childrens;
+	std::vector<XMLresource*> childrens;
 };

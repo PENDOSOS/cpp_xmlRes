@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-	Node tree;
+	XMLresource tree;
 
 	tree.load();
 
