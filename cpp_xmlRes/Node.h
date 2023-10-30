@@ -12,7 +12,7 @@ public:
 	Node(int _value, std::string _tag);
 	std::shared_ptr<Node> getPtr();
 	std::shared_ptr<Node> parent;
-	std::shared_ptr<std::vector<std::shared_ptr<Node>>> children;
+	/*std::shared_ptr<*/std::vector<std::shared_ptr<Node>>/*>*/ children;
 	int value;
 	std::string tag;
 };

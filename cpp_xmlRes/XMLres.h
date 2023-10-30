@@ -14,11 +14,11 @@ public:
 	XMLresource();
 	XMLresource(int a, std::string tag);
 	void load();
-	//void print();
-	//void printChildren(std::vector<std::shared_ptr<XMLresource>> const& childrens, int j);
-	//void save();
-	//void saveChildrens(std::vector<std::shared_ptr<XMLresource>> const& childrens, std::ofstream& fout);
+	void print();
+	void save();
 	std::weak_ptr<XMLresource> getPtr();
 private:
+	void saveChildrens(/*std::shared_ptr<*/std::vector<std::shared_ptr<Node>>/*> */const& childrens, std::ofstream& fout);
+	void printChildrens(std::vector<std::shared_ptr<Node>> const& childrens, int j);
 	std::shared_ptr<Node> node_ptr;
 };

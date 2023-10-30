@@ -12,7 +12,9 @@ int main()
 
 	tree.load();
 
-	//tree.print();
+	tree.print();
+
+	tree.save();
 
 	return 0;
 }
