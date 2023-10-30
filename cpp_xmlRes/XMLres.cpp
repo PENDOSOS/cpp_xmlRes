@@ -77,7 +77,7 @@ void XMLresource::saveChildrens(/*std::shared_ptr<*/std::vector<std::shared_ptr<
 	while (i < childrens.size())
 	{
 		fout << "<" << childrens[i]->tag << ">" << std::endl;
-		fout << childrens[i]->value << std::endl;
+		fout << "value=" << childrens[i]->value << std::endl;
 		if (childrens.size() != 0)
 		{
 			saveChildrens(childrens[i]->children, fout);
@@ -87,7 +87,17 @@ void XMLresource::saveChildrens(/*std::shared_ptr<*/std::vector<std::shared_ptr<
 	}
 }
 
-std::weak_ptr<XMLresource> XMLresource::getPtr() 
+std::shared_ptr<XMLresource> XMLresource::getPtr() 
 {
 	return shared_from_this();
+}
+
+XMLresource::iterator XMLresource::begin() const
+{
+	return iterator(node_ptr.get());
+}
+
+XMLresource::iterator XMLresource::end() const
+{
+	return iterator(nullptr);
 }

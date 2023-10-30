@@ -16,5 +16,17 @@ int main()
 
 	tree.save();
 
+	auto a = tree.begin();
+
+	a;
+
+	++a;
+	++a;
+	++a;
+	++a;
+	++a;
+
+	a = tree.end();
+
 	return 0;
 }
