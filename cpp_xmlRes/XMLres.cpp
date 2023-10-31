@@ -34,7 +34,7 @@ void XMLresource::load()
 				std::string temp_tag = line;
 				std::getline(fin, line);
 				std::shared_ptr<Node> temp = std::make_shared<Node>(std::stoi(std::string(1, line[line.size() - 1])), temp_tag);
-				node_ptr->children.push_back(temp);
+				node_ptr->children.push_back(std::move(temp));
 				node_ptr->children.back()->parent = node_ptr->getPtr();
 				node_ptr = node_ptr->children.back()->getPtr();
 			}
@@ -93,9 +93,19 @@ void XMLresource::saveChildrens(std::vector<std::shared_ptr<Node>> const& childr
 	}
 }
 
-XMLresource::iterator XMLresource::add(std::string const& name, int value, iterator node)
+XMLresource::iterator XMLresource::add(std::string const& name, int value, iterator const& node)
 {
-	return begin();
+	for (auto i = begin(); i != end(); ++i)
+	{
+		if (i == node)
+		{
+			std::shared_ptr<Node> new_node = std::make_shared<Node>(value, name);
+			node.p->children.push_back(std::move(new_node));
+			node.p->children.back()->parent = node.p->getPtr();
+		}
+	}
+	XMLresource::iterator added_elem(&*node.p->children.back());
+	return added_elem;
 }
 
 XMLresource::iterator XMLresource::begin() const

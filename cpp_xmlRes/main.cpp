@@ -15,6 +15,9 @@ int main()
 
 	tree->print();
 
+	auto a = tree->add("goyda", 7, tree->begin());
+
+	tree->print();
 	tree->save();
 
 	return 0;

@@ -18,7 +18,7 @@ public:
 	void load();
 	void print();
 	void save();
-	iterator add(std::string const& name, int value, iterator node);
+	iterator add(std::string const& name, int value, iterator const& node);
 
 	iterator begin() const;
 	iterator end() const;
