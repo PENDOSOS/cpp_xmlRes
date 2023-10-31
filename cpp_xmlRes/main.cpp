@@ -3,30 +3,19 @@
 
 #include <iostream>
 #include "XMLres.h"
+#include <algorithm>
 
 using namespace std;
 
 int main()
 {
-	XMLresource tree;
+	auto tree = XMLresource::create();
 
-	tree.load();
+	tree->load();
 
-	tree.print();
+	tree->print();
 
-	tree.save();
-
-	auto a = tree.begin();
-
-	a;
-
-	++a;
-	++a;
-	++a;
-	++a;
-	++a;
-
-	a = tree.end();
+	tree->save();
 
 	return 0;
 }

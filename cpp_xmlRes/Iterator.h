@@ -7,7 +7,7 @@ template <typename ValueType>
 class Iterator : public std::iterator<std::input_iterator_tag, ValueType>
 {
 public:
-	
+	Iterator();
 	Iterator(Iterator const& it);
 	
 	bool operator==(Iterator const& other) const;
@@ -27,6 +27,9 @@ Iterator<ValueType>::Iterator(ValueType* p) : p(p) {}
 
 template <typename ValueType>
 Iterator<ValueType>::Iterator(Iterator const& it) : p(it.p) {}
+
+template <typename ValueType>
+Iterator<ValueType>::Iterator() : p(nullptr) {}
 
 template<typename ValueType>
 bool Iterator<ValueType>::operator!=(Iterator const& other) const
@@ -85,7 +88,8 @@ Iterator<ValueType>& Iterator<ValueType>::levelUp(ValueType* p)
 	}
 	else
 	{
-		this->p = p;
+		this->p = nullptr;
+		//auto end_of_main = this->p->children.end();
 		return *this;
 	}
 }

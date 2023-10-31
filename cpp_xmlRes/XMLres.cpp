@@ -1,11 +1,17 @@
 #include "XMLres.h"
 
-XMLresource::XMLresource()
+/*XMLresource::XMLresource()
 {
-}
+}*/
 
-XMLresource::XMLresource(int a, std::string tag)
+/*XMLresource::XMLresource(int a, std::string tag)
 {
+}*/
+
+std::unique_ptr<XMLresource> XMLresource::create()
+{
+	std::unique_ptr<XMLresource> new_xml(new XMLresource);
+	return std::move(new_xml);
 }
 
 void XMLresource::load()
@@ -71,7 +77,7 @@ void XMLresource::save()
 	fout.close();
 }
 
-void XMLresource::saveChildrens(/*std::shared_ptr<*/std::vector<std::shared_ptr<Node>>/*> */const& childrens, std::ofstream& fout)
+void XMLresource::saveChildrens(std::vector<std::shared_ptr<Node>> const& childrens, std::ofstream& fout)
 {
 	int i = 0;
 	while (i < childrens.size())
@@ -87,9 +93,9 @@ void XMLresource::saveChildrens(/*std::shared_ptr<*/std::vector<std::shared_ptr<
 	}
 }
 
-std::shared_ptr<XMLresource> XMLresource::getPtr() 
+XMLresource::iterator XMLresource::add(std::string const& name, int value, iterator node)
 {
-	return shared_from_this();
+	return begin();
 }
 
 XMLresource::iterator XMLresource::begin() const
@@ -99,5 +105,9 @@ XMLresource::iterator XMLresource::begin() const
 
 XMLresource::iterator XMLresource::end() const
 {
+	//auto a = node_ptr->children.end(); 
+	//I couldn't implement of anything better than amke end() as nullptr.
+	//I wanted to return end() of children vector of core node, but can't convert vector iterator to XMLresource iterator
+	//because of &*vector.end() doesn't work with ptr to place memory after last elem of vector
 	return iterator(nullptr);
 }
