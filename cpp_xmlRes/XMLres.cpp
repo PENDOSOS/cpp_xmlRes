@@ -95,14 +95,18 @@ void XMLresource::saveChildrens(std::vector<std::shared_ptr<Node>> const& childr
 
 XMLresource::iterator XMLresource::add(std::string const& name, int value, iterator const& node)
 {
-	for (auto i = begin(); i != end(); ++i)
+	if (node == end())
+		return node;
+	auto iterator = begin();
+	while (iterator != end())
 	{
-		if (i == node)
+		if (iterator == node)
 		{
 			std::shared_ptr<Node> new_node = std::make_shared<Node>(value, name);
 			node.p->children.push_back(std::move(new_node));
 			node.p->children.back()->parent = node.p->getPtr();
 		}
+		++iterator;
 	}
 	XMLresource::iterator added_elem(&*node.p->children.back());
 	return added_elem;
@@ -115,9 +119,6 @@ XMLresource::iterator XMLresource::begin() const
 
 XMLresource::iterator XMLresource::end() const
 {
-	//auto a = node_ptr->children.end(); 
-	//I couldn't implement of anything better than amke end() as nullptr.
-	//I wanted to return end() of children vector of core node, but can't convert vector iterator to XMLresource iterator
-	//because of &*vector.end() doesn't work with ptr to place memory after last elem of vector
-	return iterator(nullptr);
+	auto xml_end = &node_ptr->children.end();
+	return XMLresource::iterator (xml_end->_Ptr->get());
 }
