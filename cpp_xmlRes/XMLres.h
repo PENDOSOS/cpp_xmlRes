@@ -19,12 +19,12 @@ public:
 	void print();
 	void save();
 	iterator add(std::string const& name, int value, iterator const& node);
-	iterator find(std::string const& name);
-	iterator find(int value);
-	bool erase(iterator node);
+	iterator find(std::string const& name) const&;
+	iterator find(int value) const&;
+	bool erase(iterator const& node) const&;
 
-	iterator begin() const;
-	iterator end() const;
+	iterator begin() const&;
+	iterator end() const&;
 private:
 	XMLresource() = default;
 	void saveChildrens(std::vector<std::shared_ptr<Node>> const& childrens, std::ofstream& fout);

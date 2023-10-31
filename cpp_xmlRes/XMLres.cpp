@@ -1,13 +1,5 @@
 #include "XMLres.h"
 
-/*XMLresource::XMLresource()
-{
-}*/
-
-/*XMLresource::XMLresource(int a, std::string tag)
-{
-}*/
-
 std::unique_ptr<XMLresource> XMLresource::create()
 {
 	std::unique_ptr<XMLresource> new_xml(new XMLresource);
@@ -112,7 +104,7 @@ XMLresource::iterator XMLresource::add(std::string const& name, int value, itera
 	return added_elem;
 }
 
-XMLresource::iterator XMLresource::find(std::string const& name)
+XMLresource::iterator XMLresource::find(std::string const& name) const&
 {
 	auto iterator = begin();
 	while (iterator != end())
@@ -126,7 +118,7 @@ XMLresource::iterator XMLresource::find(std::string const& name)
 	return end();
 }
 
-XMLresource::iterator XMLresource::find(int value)
+XMLresource::iterator XMLresource::find(int value) const&
 {
 	auto iterator = begin();
 	while (iterator != end())
@@ -140,12 +132,32 @@ XMLresource::iterator XMLresource::find(int value)
 	return end();
 }
 
-XMLresource::iterator XMLresource::begin() const
+bool XMLresource::erase(iterator const& node) const&
+{
+	if (node.p->parent == nullptr)
+		return false;
+	else
+	{
+		if (node.p->children.size() != 0)
+		{
+			for (int i = 0; i < node.p->children.size(); i++)
+				node.p->parent->children.push_back(std::move(node.p->children[i]));
+		}
+		auto parent = node.p->parent;
+		auto iterator = parent->children.begin();
+		while (iterator->get() != node.p)
+			++iterator;
+		parent->children.erase(iterator);
+		return true;
+	}
+}
+
+XMLresource::iterator XMLresource::begin() const&
 {
 	return iterator(node_ptr.get());
 }
 
-XMLresource::iterator XMLresource::end() const
+XMLresource::iterator XMLresource::end() const&
 {
 	auto xml_end = &node_ptr->children.end();
 	return XMLresource::iterator (xml_end->_Ptr->get());

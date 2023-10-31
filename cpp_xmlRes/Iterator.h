@@ -7,7 +7,7 @@ template <typename ValueType>
 class Iterator : public std::iterator<std::input_iterator_tag, ValueType>
 {
 public:
-	Iterator();
+	~Iterator() = default;
 	Iterator(Iterator const& it);
 	
 	bool operator==(Iterator const& other) const;
@@ -27,9 +27,6 @@ Iterator<ValueType>::Iterator(ValueType* p) : p(p) {}
 
 template <typename ValueType>
 Iterator<ValueType>::Iterator(Iterator const& it) : p(it.p) {}
-
-template <typename ValueType>
-Iterator<ValueType>::Iterator() : p(nullptr) {}
 
 template<typename ValueType>
 bool Iterator<ValueType>::operator!=(Iterator const& other) const

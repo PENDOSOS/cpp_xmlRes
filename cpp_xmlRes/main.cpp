@@ -18,10 +18,12 @@ int main()
 	auto a = tree->add("goyda", 7, tree->begin());
 
 	//tree->print();
-	//tree->save();
 
 	auto c = tree->find(7);
 	auto b = tree->find("goyda");
+
+	tree->erase(tree->find("<aboba>"));
+	tree->save();
 
 	return 0;
 }
