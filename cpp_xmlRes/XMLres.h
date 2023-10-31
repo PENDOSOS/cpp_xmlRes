@@ -19,6 +19,9 @@ public:
 	void print();
 	void save();
 	iterator add(std::string const& name, int value, iterator const& node);
+	iterator find(std::string const& name);
+	iterator find(int value);
+	bool erase(iterator node);
 
 	iterator begin() const;
 	iterator end() const;

@@ -112,6 +112,34 @@ XMLresource::iterator XMLresource::add(std::string const& name, int value, itera
 	return added_elem;
 }
 
+XMLresource::iterator XMLresource::find(std::string const& name)
+{
+	auto iterator = begin();
+	while (iterator != end())
+	{
+		if (iterator.p->tag == name)
+		{
+			return iterator;
+		}
+		++iterator;
+	}
+	return end();
+}
+
+XMLresource::iterator XMLresource::find(int value)
+{
+	auto iterator = begin();
+	while (iterator != end())
+	{
+		if (iterator.p->value == value)
+		{
+			return iterator;
+		}
+		++iterator;
+	}
+	return end();
+}
+
 XMLresource::iterator XMLresource::begin() const
 {
 	return iterator(node_ptr.get());

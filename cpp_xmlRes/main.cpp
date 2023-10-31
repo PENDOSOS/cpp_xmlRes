@@ -15,18 +15,13 @@ int main()
 
 	tree->print();
 
-	//auto a = tree->add("goyda", 7, tree->end());
+	auto a = tree->add("goyda", 7, tree->begin());
 
 	//tree->print();
 	//tree->save();
 
-	auto c = tree->end();
-	auto b = tree->begin();
-	++b;
-	++b;
-	++b;
-	++b;
-	++b;
+	auto c = tree->find(7);
+	auto b = tree->find("goyda");
 
 	return 0;
 }
