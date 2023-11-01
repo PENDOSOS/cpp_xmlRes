@@ -11,19 +11,17 @@ int main()
 {
 	auto tree = XMLresource::create();
 
-	tree->load();
+	tree->load("xml.txt");
 
 	tree->print();
 
 	auto a = tree->add("goyda", 7, tree->begin());
 
-	//tree->print();
-
 	auto c = tree->find(7);
 	auto b = tree->find("goyda");
 
-	tree->erase(tree->find("<aboba>"));
-	tree->save();
+	tree->erase(b);
+	tree->save("xml_saved.txt");
 
 	return 0;
 }

@@ -15,9 +15,9 @@ public:
 	typedef Iterator<Node> iterator;
 
 	static std::unique_ptr<XMLresource> create();
-	void load();
+	void load(std::string const& file_name);
 	void print();
-	void save();
+	void save(std::string const& file_name);
 	iterator add(std::string const& name, int value, iterator const& node);
 	iterator find(std::string const& name) const&;
 	iterator find(int value) const&;

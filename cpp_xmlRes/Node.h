@@ -13,6 +13,6 @@ public:
 	std::shared_ptr<Node> getPtr();
 	std::shared_ptr<Node> parent;
 	std::vector<std::shared_ptr<Node>> children;
-	int value;
+	int value = 0;
 	std::string tag;
 };

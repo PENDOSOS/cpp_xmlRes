@@ -6,10 +6,10 @@ std::unique_ptr<XMLresource> XMLresource::create()
 	return std::move(new_xml);
 }
 
-void XMLresource::load()
+void XMLresource::load(std::string const& file_name)
 {
 	std::string line;
-	std::ifstream fin("xml.txt");
+	std::ifstream fin(file_name);
 	while (std::getline(fin, line))
 	{
 		if (line[0] == '<' && line[1] != '/')
@@ -17,15 +17,15 @@ void XMLresource::load()
 			if (node_ptr == nullptr)
 			{
 				node_ptr = std::make_shared<Node>();
-				node_ptr->tag = line;
+				node_ptr->tag = line.substr(1, line.size() - 2);
 				std::getline(fin, line);
-				node_ptr->value = std::stoi(std::string(1, line[line.size() - 1]));
+				node_ptr->value = std::stoi(line.substr(6));
 			}
 			else
 			{
-				std::string temp_tag = line;
+				std::string temp_tag = line.substr(1, line.size() - 2);
 				std::getline(fin, line);
-				std::shared_ptr<Node> temp = std::make_shared<Node>(std::stoi(std::string(1, line[line.size() - 1])), temp_tag);
+				std::shared_ptr<Node> temp = std::make_shared<Node>(std::stoi(line.substr(6)), temp_tag);
 				node_ptr->children.push_back(std::move(temp));
 				node_ptr->children.back()->parent = node_ptr->getPtr();
 				node_ptr = node_ptr->children.back()->getPtr();
@@ -41,8 +41,11 @@ void XMLresource::load()
 
 void XMLresource::print()
 {
-	std::cout << node_ptr->value << std::endl;
-	printChildrens(node_ptr->children, 3);
+	//if (node_ptr != nullptr)
+	{
+		std::cout << node_ptr->value << std::endl;
+		printChildrens(node_ptr->children, 3);
+	}
 }
 
 void XMLresource::printChildrens(std::vector<std::shared_ptr<Node>> const& childrens, int j)
@@ -59,9 +62,9 @@ void XMLresource::printChildrens(std::vector<std::shared_ptr<Node>> const& child
 	}
 }
 
-void XMLresource::save()
+void XMLresource::save(std::string const& file_name)
 {
-	std::ofstream fout("xml_saved.txt");
+	std::ofstream fout(file_name);
 	fout << "<" << node_ptr->tag << ">" << std::endl;
 	fout << "value=" << node_ptr->value << std::endl;
 	saveChildrens(node_ptr->children, fout);
@@ -121,15 +124,20 @@ XMLresource::iterator XMLresource::find(std::string const& name) const&
 XMLresource::iterator XMLresource::find(int value) const&
 {
 	auto iterator = begin();
-	while (iterator != end())
+	if (iterator != nullptr)
 	{
-		if (iterator.p->value == value)
+		while (iterator != end())
 		{
-			return iterator;
+			if (iterator.p->value == value)
+			{
+				return iterator;
+			}
+			++iterator;
 		}
-		++iterator;
+		return end();
 	}
-	return end();
+	else
+		return iterator;
 }
 
 bool XMLresource::erase(iterator const& node) const&
