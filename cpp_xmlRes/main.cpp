@@ -3,16 +3,32 @@
 
 #include <iostream>
 #include "XMLres.h"
+#include <algorithm>
 
 using namespace std;
 
 int main()
 {
-	Node tree;
+	auto tree = XMLresource::create();
 
-	tree.load();
+	try
+	{
+		tree->load("xml.txt");
+	}
+	catch (const std::runtime_error& err)
+	{
+		cout << err.what() << endl;
+	}
 
-	tree.print();
+	tree->print();
+
+	auto a = tree->add("goyda", 7, tree->begin());
+
+	auto c = tree->find(7);
+	auto b = tree->find("goyda");
+
+	tree->erase(b);
+	tree->save("xml_saved.txt");
 
 	return 0;
 }

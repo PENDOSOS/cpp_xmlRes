@@ -5,6 +5,15 @@ value=3
 <kek>
 value=1
 </kek>
+<jojo>
+value=3
+</jojo>
+<chich>
+value=3
+</chich>
+<pol>
+value=3
+</pol>
 </aboba>
 <lol>
 value=5
