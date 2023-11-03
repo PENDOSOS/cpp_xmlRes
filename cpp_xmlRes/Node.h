@@ -9,6 +9,7 @@ class Node : public std::enable_shared_from_this<Node>
 {
 public:
 	Node();
+	~Node() = default;
 	Node(int _value, std::string _tag);
 	std::shared_ptr<Node> getPtr();
 	std::shared_ptr<Node> parent;

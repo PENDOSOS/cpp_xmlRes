@@ -11,7 +11,14 @@ int main()
 {
 	auto tree = XMLresource::create();
 
-	tree->load("xml.txt");
+	try
+	{
+		tree->load("xml.txt");
+	}
+	catch (const std::runtime_error& err)
+	{
+		cout << err.what() << endl;
+	}
 
 	tree->print();
 

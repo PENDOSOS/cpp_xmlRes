@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <memory>
+#include <algorithm>
 #include "Node.h"
 #include "Iterator.h"
 

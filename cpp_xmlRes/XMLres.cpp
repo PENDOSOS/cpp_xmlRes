@@ -12,28 +12,49 @@ void XMLresource::load(std::string const& file_name)
 	std::ifstream fin(file_name);
 	while (std::getline(fin, line))
 	{
-		if (line[0] == '<' && line[1] != '/')
+		if (line[0] == '<' && line[1] != '/' && line.size() > 2)
 		{
 			if (node_ptr == nullptr)
 			{
 				node_ptr = std::make_shared<Node>();
 				node_ptr->tag = line.substr(1, line.size() - 2);
 				std::getline(fin, line);
+				line.erase(remove(line.begin(), line.end(), ' '), line.end());
+				if (line.substr(0, 6) != "value=" || line.size() <= 6 || line.substr(6).find_first_not_of("0123456789") != std::string::npos)
+				{
+					std::string error_message = "Invalid value or invalid value declaration in " + node_ptr->tag;
+					node_ptr.reset();
+					throw std::runtime_error(error_message);
+				}
 				node_ptr->value = std::stoi(line.substr(6));
 			}
 			else
 			{
 				std::string temp_tag = line.substr(1, line.size() - 2);
 				std::getline(fin, line);
+				line.erase(remove(line.begin(), line.end(), ' '), line.end());
+				if (line.substr(0, 6) != "value=" || line.size() <= 6 || line.substr(6).find_first_not_of("0123456789") != std::string::npos)
+				{
+					std::string error_message = "Invalid value or invalid value declaration in " + temp_tag;
+					node_ptr.reset();
+					throw std::runtime_error(error_message);
+				}
 				std::shared_ptr<Node> temp = std::make_shared<Node>(std::stoi(line.substr(6)), temp_tag);
 				node_ptr->children.push_back(std::move(temp));
 				node_ptr->children.back()->parent = node_ptr->getPtr();
 				node_ptr = node_ptr->children.back()->getPtr();
 			}
 		}
-		else if (line[0] == '<' && line[1] == '/' && node_ptr->parent != nullptr)
+		else if (line[0] == '<' && line[1] == '/' && line.size() > 3 && node_ptr->tag == line.substr(2, node_ptr->tag.size()))
 		{
+			if (node_ptr->parent != nullptr)
 			node_ptr = node_ptr->parent;
+		}
+		else
+		{
+			std::string error_message = "Invalid tag name or no open or closing tag matched: " + line;
+			node_ptr.reset();
+			throw std::runtime_error(error_message);
 		}
 	}
 	fin.close();
@@ -41,7 +62,7 @@ void XMLresource::load(std::string const& file_name)
 
 void XMLresource::print()
 {
-	//if (node_ptr != nullptr)
+	if (node_ptr != nullptr)
 	{
 		std::cout << node_ptr->value << std::endl;
 		printChildrens(node_ptr->children, 3);
@@ -64,12 +85,15 @@ void XMLresource::printChildrens(std::vector<std::shared_ptr<Node>> const& child
 
 void XMLresource::save(std::string const& file_name)
 {
-	std::ofstream fout(file_name);
-	fout << "<" << node_ptr->tag << ">" << std::endl;
-	fout << "value=" << node_ptr->value << std::endl;
-	saveChildrens(node_ptr->children, fout);
-	fout << "</" << node_ptr->tag << ">" << std::endl;
-	fout.close();
+	if (node_ptr != nullptr)
+	{
+		std::ofstream fout(file_name);
+		fout << "<" << node_ptr->tag << ">" << std::endl;
+		fout << "value=" << node_ptr->value << std::endl;
+		saveChildrens(node_ptr->children, fout);
+		fout << "</" << node_ptr->tag << ">" << std::endl;
+		fout.close();
+	}
 }
 
 void XMLresource::saveChildrens(std::vector<std::shared_ptr<Node>> const& childrens, std::ofstream& fout)
@@ -90,45 +114,34 @@ void XMLresource::saveChildrens(std::vector<std::shared_ptr<Node>> const& childr
 
 XMLresource::iterator XMLresource::add(std::string const& name, int value, iterator const& node)
 {
-	if (node == end())
-		return node;
-	auto iterator = begin();
-	while (iterator != end())
+	if (node_ptr != nullptr)
 	{
-		if (iterator == node)
+		if (node == end())
+			return node;
+		auto iterator = begin();
+		while (iterator != end())
 		{
-			std::shared_ptr<Node> new_node = std::make_shared<Node>(value, name);
-			node.p->children.push_back(std::move(new_node));
-			node.p->children.back()->parent = node.p->getPtr();
+			if (iterator == node)
+			{
+				std::shared_ptr<Node> new_node = std::make_shared<Node>(value, name);
+				node.p->children.push_back(std::move(new_node));
+				node.p->children.back()->parent = node.p->getPtr();
+			}
+			++iterator;
 		}
-		++iterator;
+		XMLresource::iterator added_elem(&*node.p->children.back());
+		return added_elem;
 	}
-	XMLresource::iterator added_elem(&*node.p->children.back());
-	return added_elem;
 }
 
 XMLresource::iterator XMLresource::find(std::string const& name) const&
 {
-	auto iterator = begin();
-	while (iterator != end())
+	if (node_ptr != nullptr)
 	{
-		if (iterator.p->tag == name)
-		{
-			return iterator;
-		}
-		++iterator;
-	}
-	return end();
-}
-
-XMLresource::iterator XMLresource::find(int value) const&
-{
-	auto iterator = begin();
-	if (iterator != nullptr)
-	{
+		auto iterator = begin();
 		while (iterator != end())
 		{
-			if (iterator.p->value == value)
+			if (iterator.p->tag == name)
 			{
 				return iterator;
 			}
@@ -136,37 +149,73 @@ XMLresource::iterator XMLresource::find(int value) const&
 		}
 		return end();
 	}
-	else
-		return iterator;
+}
+
+XMLresource::iterator XMLresource::find(int value) const&
+{
+	if (node_ptr != nullptr)
+	{
+		auto iterator = begin();
+		if (iterator != nullptr)
+		{
+			while (iterator != end())
+			{
+				if (iterator.p->value == value)
+				{
+					return iterator;
+				}
+				++iterator;
+			}
+			return end();
+		}
+		else
+			return iterator;
+	}
 }
 
 bool XMLresource::erase(iterator const& node) const&
 {
-	if (node.p->parent == nullptr)
-		return false;
-	else
+	if (node_ptr != nullptr)
 	{
-		if (node.p->children.size() != 0)
+		if (node.p->parent == nullptr)
+			return false;
+		else
 		{
-			for (int i = 0; i < node.p->children.size(); i++)
-				node.p->parent->children.push_back(std::move(node.p->children[i]));
+			if (node.p->children.size() != 0)
+			{
+				for (int i = 0; i < node.p->children.size(); i++)
+					node.p->parent->children.push_back(std::move(node.p->children[i]));
+			}
+			auto parent = node.p->parent;
+			auto iterator = parent->children.begin();
+			while (iterator->get() != node.p)
+				++iterator;
+			parent->children.erase(iterator);
+			return true;
 		}
-		auto parent = node.p->parent;
-		auto iterator = parent->children.begin();
-		while (iterator->get() != node.p)
-			++iterator;
-		parent->children.erase(iterator);
-		return true;
 	}
+	else
+		return false;
 }
 
 XMLresource::iterator XMLresource::begin() const&
 {
-	return iterator(node_ptr.get());
+	if (node_ptr != nullptr)
+	{
+		return iterator(node_ptr.get());
+	}
 }
 
 XMLresource::iterator XMLresource::end() const&
 {
-	auto xml_end = &node_ptr->children.end();
-	return XMLresource::iterator (xml_end->_Ptr->get());
+	if (node_ptr != nullptr)
+	{
+		if (node_ptr->children.size() != 0)
+		{
+			auto xml_end = &node_ptr->children.end();
+			return iterator(xml_end->_Ptr->get());
+		}
+		else
+			return iterator(nullptr);
+	}
 }
